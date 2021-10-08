@@ -1,1 +1,4 @@
-# Vue 3 + Vite
+# Weather App 
+Vite
+Vue3
+Weather API 
