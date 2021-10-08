@@ -37,6 +37,8 @@
       </div>
       <div class="forecast__content">
         <forecast-day />
+        <forecast-day />
+        <forecast-day />
       </div>
     </article>
     <article class="air">
@@ -287,6 +289,10 @@ body {
   padding: 0 0 0.5em 0
 }
 
+article {
+  margin: 0 0 var(--margin-border) 0;
+}
+
 /* FORECAST */
 
 .article__title {
@@ -295,4 +301,7 @@ body {
   height: 2em;
   font-size: 0.75em;
 }
+
+
+/* AIR */
 </style>
