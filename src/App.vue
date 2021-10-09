@@ -46,30 +46,25 @@
         <h3>Air</h3>
         <SeeMore />
       </div>
-      <div class="air__content">
-        <div class="air__content__realfeel">
-          <p class="light-font">RealFeel</p>
+      <div class="air__content__wraper">
+        <div class="air__content ">
+          <p class="font--light">RealFeel</p>
           <p class="" id="realFeel">30º</p>
         </div>
-        <div class="air__content__uvindex">
-          <p class="light-font">UVIndex</p>
+        <div class="air__content humidity">
+          <p class="font--light">UVIndex</p>
           <p class="" id="uvIndex">Low</p>
         </div>
-        <div class="air__content__wind">
-          <p class="light-font">Wind</p>
+        <div class="air__content humidity">
+          <p class="font--light">Wind</p>
           <p class="" id="wind">12 - 28 km/h</p>
         </div>
-        <div class="air__content__humidity">
+        <div class="air__content humidity">
           <div class="humidity__data">
-            <p class="light-font">Humidity</p>
+            <p class="font--light">Humidity</p>
             <p class="" id="humidity">80%</p>
           </div>
-          <div class="humidity__graph">
-            <div class="humidity__graph__container">
-              <img class="humidity__graph__wave" src="" alt="">
-              <img class="humidity__graph__drop" src="" alt="">
-            </div>
-          </div>
+          <humidity-graph />
         </div>
       </div>
     </article>
@@ -80,12 +75,12 @@
         <SeeMore />
       </div>
       <sunrise-sunset-graph />
-      <div class="sunrise-sunset__data">
-        <div class="sunrise-sunset__data__sunrise">
+      <div class="sunrise-sunset__data__wrapper">
+        <div class="sunrise-sunset__data">
           <p class="light-font">Sunrise</p>
           <p id="humidity">8:06</p>
         </div>
-        <div class="sunrise-sunset__data__sunset">
+        <div class="sunrise-sunset__data">
           <p class="light-font">Sunset</p>
           <p id="humidity">19:45</p>
         </div>
@@ -103,6 +98,8 @@
 import ForecastDay from './components/forecast_day.vue'
 import SunriseSunsetGraph from './components/sunrise_sunset_graph.vue'
 import SeeMore from './components/see_more.vue'
+import HumidityGraph from './components/humidity_graph.vue'
+
 
 export default {
   name: 'App',
@@ -117,7 +114,8 @@ export default {
   components: {
     ForecastDay,
     SunriseSunsetGraph,
-    SeeMore
+    SeeMore,
+    HumidityGraph,
   }
 }
 </script>
@@ -286,11 +284,10 @@ body {
 
 .weather-credits {
   color: var(--black);
-  padding: 0 0 0.5em 0
 }
 
 article {
-  margin: 0 0 var(--margin-border) 0;
+  margin: calc(var(--margin-border)/2) 0 calc(var(--margin-border)/2) 0;
 }
 
 /* FORECAST */
@@ -302,6 +299,49 @@ article {
   font-size: 0.75em;
 }
 
+.forecast {
+  margin-top: calc(var(--margin-border)/6);
+}
+
+.air__content__wraper {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  font-size: 0.75em;
+  margin: calc(var(--margin-border)/2) 0 0 0;
+}
+
+.air__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 2em;
+  font-weight: 500 !important;
+}
+
+.humidity__data {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.humidity__graph {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sunrise-sunset__data__wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.sunrise-sunset__data {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
 
 /* AIR */
 </style>
