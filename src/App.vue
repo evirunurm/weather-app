@@ -8,8 +8,11 @@
     <div class="searchbar">
       <label class="location-label" for="location-input">Location</label>
       <div class="location-searchbar">
-        <input class="location-searchbar__input" id="location-input" type="text" name="" value="Amste">
-        <img class="location-searchbar__icon" src="" alt="">
+        <input list="locations" @input="fetchLocation()" class="location-searchbar__input" id="location-input" type="text" name="" v-model="location">
+        <datalist id="locations">
+          <option value="Hola" />
+        </datalist>
+        <img class="location-searchbar__icon" src="./assets/images/icons/search.png" alt="">
       </div>
     </div>
     <div class="summary">
@@ -17,7 +20,11 @@
         <p class="summary__today font--light">Today: </p>
         <h3 class="summary__cityname" id="weather_city-name">City Name</h3>
         <p class="summary__timedate font--light" id="weather_time-date">19:16 03/10</p>
-        <h2 class="summary__degrees" id="weather_degrees">28</h2>
+        <div class="summary__degrees">
+          <h2 class="degrees__number" id="weather_degrees">28</h2>
+          <p class="degrees__unit">ºC</p>
+        </div>
+
       </div>
       <div class="right">
         <div class="summary__icon__container">
@@ -77,11 +84,11 @@
       <sunrise-sunset-graph />
       <div class="sunrise-sunset__data__wrapper">
         <div class="sunrise-sunset__data">
-          <p class="light-font">Sunrise</p>
+          <p class="font--light">Sunrise</p>
           <p id="humidity">8:06</p>
         </div>
         <div class="sunrise-sunset__data">
-          <p class="light-font">Sunset</p>
+          <p class="font--light">Sunset</p>
           <p id="humidity">19:45</p>
         </div>
       </div>
@@ -91,6 +98,7 @@
 </main>
 <footer>
   <a href="http://www.freepik.com">Icons Designed by Freepik</a>
+  <p>Designed by </p>
 </footer>
 </template>
 
@@ -103,14 +111,50 @@ import HumidityGraph from './components/humidity_graph.vue'
 
 export default {
   name: 'App',
+  props: {
+    location: String,
+  },
   data() {
     return {
-      apiKey: 'helloimakey',
-      searchQuery: '',
-      apiUrl: 'http://api.weatherapi.com/v1/'
+      apiKey: 'keyyo',
+      apiUrl: 'http://api.weatherapi.com/v1/',
     }
   },
-  methods: {},
+  methods: {
+    async fetchLocation() {
+      if (this.location.length > 2) {
+        const url = `${this.apiUrl}search.json?key=${this.apiKey}&q=${this.location}`;
+        try {
+          const response = await fetch(url, {
+            mode: "cors",
+          });
+          const responseJson = await response.json();
+          responseJson.forEach((location, i) => {
+            console.log(location)
+          });
+
+          // todo doSomething
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    },
+    async fetchWeather() {
+      const url = `${this.apiUrl}forecast.json?key=${this.apiKey}&q=${this.location}&days=3&aqi=no&alerts=no`;
+      try {
+        const response = await fetch(url, {
+          mode: "cors",
+        });
+        weatherData = await response.json();
+        setData(weatherData);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    setData(data) {
+      this.eval(data) = data;
+    },
+  },
   components: {
     ForecastDay,
     SunriseSunsetGraph,
@@ -142,7 +186,6 @@ export default {
 
 body {
   overflow-x: hidden;
-  background-color: pink;
 }
 
 /* ****** */
@@ -163,7 +206,6 @@ body {
   font-size: 1.5rem;
   padding: calc(var(--margin-border)/2) 0 calc(var(--margin-border)/2) var(--margin-border);
   font-weight: 300;
-
 }
 
 .blackfont {
@@ -177,8 +219,6 @@ body {
 .weather-summary {
   position: relative;
   padding-top: calc(var(--margin-border) + 2em);
-
-  /* height: 45vh; */
 }
 
 .weather-summary>* {
@@ -212,7 +252,6 @@ body {
 
 .location-label {
   font-size: 0.75em;
-
 }
 
 .location-searchbar__input {
@@ -223,11 +262,22 @@ body {
   font-size: 0.75em;
   padding: 5px;
   color: var(--white);
+
 }
 
 .location-searchbar__input:focus {
   outline: none;
   background-color: rgb(255, 255, 255, 0.1);
+}
+
+.location-searchbar {
+  position: relative;
+}
+
+.location-searchbar__icon {
+  position: absolute;
+  height: 90%;
+  right: 7%;
 }
 
 /* SUMMARY */
@@ -237,14 +287,37 @@ body {
   justify-content: space-between;
 }
 
+.summary__cityname {
+  font-weight: normal;
+  font-size: 1.5em;
+}
+
+.summary__degrees {
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+}
+
+.degrees__number,
+.degrees__unit {
+  font-size: 3em;
+  font-weight: 600;
+}
+
+.degrees__unit {
+  font-size: 1.5em;
+  transform: translateY(-20%);
+}
+
 .right {
   max-width: 50%;
+  display: flex;
+  align-items: center;
 }
 
 .summary__icon {
   width: 100%;
-  transform: scale(200%);
-  padding-left: 15px;
+  transform: scale(225%);
   filter: invert(1) brightness(200%);
 }
 
@@ -258,13 +331,10 @@ body {
 
 /* IMAGE CREDITS */
 
-
 .credits {
   color: var(--white);
   font-size: 0.75em;
 }
-
-
 
 .font--light {
   font-weight: 100;
@@ -303,6 +373,8 @@ article {
   margin-top: calc(var(--margin-border)/6);
 }
 
+/* AIR */
+
 .air__content__wraper {
   display: grid;
   grid-auto-flow: column;
@@ -331,16 +403,41 @@ article {
   justify-content: flex-end;
 }
 
+/* SUNRISE AND SUNSET */
+
 .sunrise-sunset__data__wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  font-weight: 500 !important;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  font-size: 0.75em;
+  margin: calc(var(--margin-border)/2) 0 0 0;
 }
 
 .sunrise-sunset__data {
-  display: flex;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
   justify-content: space-between;
+}
+
+.sunrise-sunset__data:nth-last-child(1) {
+  text-align: right;
+}
+
+/* ****** */
+/* FOOTER */
+/* ****** */
+
+footer {
+  font-size: 0.75em;
+  opacity: 0.5;
+  margin: var(--margin-border) 0 var(--margin-border) var(--margin-border);
+}
+
+footer a {
+  color: var(--black);
 }
 
 /* AIR */
