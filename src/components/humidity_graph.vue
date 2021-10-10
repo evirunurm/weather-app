@@ -14,15 +14,13 @@ export default {
   },
   methods: {
     transformHumidity() {
-      return `-${parseInt(this.humidity)/ 2.5}px`
+      const waveElement = document.getElementById("humidity-wave");
+      waveElement.style.top = `-${parseInt(this.humidity)/ 2.5}px`;
     }
   },
-  mounted() {
-    const waveElement = document.getElementById("humidity-wave");
-
-    waveElement.style.top = this.transformHumidity();
+  updated() {
+    this.transformHumidity();
   }
-
 };
 </script>
 

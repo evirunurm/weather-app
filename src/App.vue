@@ -71,7 +71,7 @@
             <p class="font--light">Humidity</p>
             <p class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
           </div>
-          <humidity-graph :humidity=weatherData?.current?.humidity />
+          <humidity-graph :humidity="weatherData?.current?.humidity" />
           <!-- weatherData?.current?.humidity -->
         </div>
       </div>
@@ -136,8 +136,6 @@ export default {
             mode: "cors",
           });
           const responseJson = await response.json();
-          console.log(responseJson)
-
           this.locationData = responseJson;
         } catch (error) {
           console.log(error)
@@ -145,7 +143,6 @@ export default {
       }
     },
     async fetchWeather() {
-      console.log("not fetching yet")
       this.locationData.forEach(async (item, i) => {
         if (item.name == this.location) {
           const url = `${this.apiUrl}forecast.json?key=${this.apiKey}&q=${item.name}&days=3&aqi=no&alerts=no`;
@@ -162,7 +159,6 @@ export default {
       });
     },
     divideForecast() {
-      console.log(this.weatherData.forecast.forecastday[0])
       this.forecastToday = this.weatherData.forecast.forecastday[0];
       this.forecastTomorrow = this.weatherData.forecast.forecastday[1];
       this.forecastAfter = this.weatherData.forecast.forecastday[2];

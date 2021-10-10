@@ -17,20 +17,51 @@
 
 <script >
 export default {
+  // props: {
+  //
+  // },
+  // methods: {
+  //   transformTime(time) {
+  //     // TO DO
+  //     // // time = "01:04 PM";
+  //     // if (time.includes("PM")) {
+  //     //
+  //     // } else if (time.includes("AM")) {
+  //     //
+  //     // } else {
+  //     //   console.log("There's been an error with the time format that the API provided.");
+  //     // }
+  //     //
+  //     // return time;
+  //   },
+  // }
+  mounted() {
+    const sunsetSunriseData = document.getElementById("sunsetSunriseData");
+    // sunsetSunriseData.stype.left = "";
+    // sunsetSunriseData.stype.width = "";
 
+    // 0 - 156
+
+
+
+    //  width: 50%;
+    // sunset-sunrise == horas
+
+  }
 };
 </script>
 
 <style scoped>
 .sunrise-sunset__graph {
   position: relative;
-  /* background: red; */
   width: 100%;
   height: 70px;
   margin: calc(var(--margin-border)/2) 0 0 0;
   display: grid;
+  border-radius: 10px 10px 10px 10px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr;
+  overflow: hidden;
 }
 
 .graph__divisor {
@@ -54,7 +85,7 @@ export default {
   transform: translate();
   width: 50%;
   height: 100%;
-  left: 60px;
+  left: 156px;
 }
 
 .graph__hours {
