@@ -8,9 +8,9 @@
     <div class="searchbar">
       <label class="location-label" for="location-input">Location</label>
       <div class="location-searchbar">
-        <input list="locations" @input="fetchLocation()" class="location-searchbar__input" id="location-input" type="text" name="" v-model="location">
+        <input list="locations" @input="fetchLocation(); fetchWeather();" class="location-searchbar__input" id="location-input" type="text" name="" v-model="location">
         <datalist id="locations">
-          <option value="Hola" />
+          <option v-for="location in locationData" :value="location?.name" />
         </datalist>
         <img class="location-searchbar__icon" src="./assets/images/icons/search.png" alt="">
       </div>
@@ -18,19 +18,17 @@
     <div class="summary">
       <div class="left">
         <p class="summary__today font--light">Today: </p>
-        <h3 class="summary__cityname" id="weather_city-name">City Name</h3>
-        <p class="summary__timedate font--light" id="weather_time-date">19:16 03/10</p>
+        <h3 class="summary__cityname" id="weather_city-name">{{ weatherData?.location?.name }}</h3>
+        <p class="summary__timedate font--light" id="weather_time-date">{{ weatherData?.location?.localtime }}</p>
         <div class="summary__degrees">
-          <h2 class="degrees__number" id="weather_degrees">28</h2>
+          <h2 class="degrees__number" id="weather_degrees">{{ weatherData?.current?.temp_c }}</h2>
           <p class="degrees__unit">ºC</p>
         </div>
-
       </div>
       <div class="right">
         <div class="summary__icon__container">
           <img class="summary__icon" src="./assets/images/icons/001lighticons-01.svg" alt="">
         </div>
-
       </div>
     </div>
     <a class="summary-credits credits font--light" href="https://www.vecteezy.com/free-vector/nature">Nature Vectors by Vecteezy</a>
@@ -43,9 +41,9 @@
         <SeeMore />
       </div>
       <div class="forecast__content">
-        <forecast-day />
-        <forecast-day />
-        <forecast-day />
+        <forecast-day day="0" :weatherToday="forecastToday" />
+        <forecast-day day="1" :weatherToday="forecastTomorrow" />
+        <forecast-day day="2" :weatherToday="forecastAfter" />
       </div>
     </article>
     <article class="air">
@@ -56,22 +54,25 @@
       <div class="air__content__wraper">
         <div class="air__content ">
           <p class="font--light">RealFeel</p>
-          <p class="" id="realFeel">30º</p>
+          <p class="" id="realFeel">{{ Math.round(weatherData?.current?.feelslike_c) }}ºC</p>
         </div>
         <div class="air__content humidity">
           <p class="font--light">UVIndex</p>
-          <p class="" id="uvIndex">Low</p>
+          <p v-if="(weatherData?.current?.uv < 4)" id="uvIndex">Low</p>
+          <p v-if="(weatherData?.current?.uv <= 6 && weatherData?.current?.uv >= 4)" id="uvIndex">Medium</p>
+          <p v-if="(weatherData?.current?.uv > 6)" id="uvIndex">High</p>
         </div>
         <div class="air__content humidity">
           <p class="font--light">Wind</p>
-          <p class="" id="wind">12 - 28 km/h</p>
+          <p class="" id="wind">{{ weatherData?.current?.wind_kph }} km/h</p>
         </div>
         <div class="air__content humidity">
           <div class="humidity__data">
             <p class="font--light">Humidity</p>
-            <p class="" id="humidity">80%</p>
+            <p class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
           </div>
-          <humidity-graph />
+          <humidity-graph :humidity=weatherData?.current?.humidity />
+          <!-- weatherData?.current?.humidity -->
         </div>
       </div>
     </article>
@@ -85,11 +86,11 @@
       <div class="sunrise-sunset__data__wrapper">
         <div class="sunrise-sunset__data">
           <p class="font--light">Sunrise</p>
-          <p id="humidity">8:06</p>
+          <p id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
         </div>
         <div class="sunrise-sunset__data">
           <p class="font--light">Sunset</p>
-          <p id="humidity">19:45</p>
+          <p id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
         </div>
       </div>
     </article>
@@ -116,8 +117,14 @@ export default {
   },
   data() {
     return {
-      apiKey: 'keyyo',
+      apiKey: '2c9b7c40a56942f6ace143344210410',
+      // 2c9b7c40a56942f6ace143344210410,
       apiUrl: 'http://api.weatherapi.com/v1/',
+      locationData: [],
+      weatherData: {},
+      forecastToday: {},
+      forecastTomorrow: {},
+      forecastAfter: {},
     }
   },
   methods: {
@@ -129,30 +136,36 @@ export default {
             mode: "cors",
           });
           const responseJson = await response.json();
-          responseJson.forEach((location, i) => {
-            console.log(location)
-          });
+          console.log(responseJson)
 
-          // todo doSomething
+          this.locationData = responseJson;
         } catch (error) {
           console.log(error)
         }
       }
     },
     async fetchWeather() {
-      const url = `${this.apiUrl}forecast.json?key=${this.apiKey}&q=${this.location}&days=3&aqi=no&alerts=no`;
-      try {
-        const response = await fetch(url, {
-          mode: "cors",
-        });
-        weatherData = await response.json();
-        setData(weatherData);
-      } catch (error) {
-        console.log(error);
-      }
+      console.log("not fetching yet")
+      this.locationData.forEach(async (item, i) => {
+        if (item.name == this.location) {
+          const url = `${this.apiUrl}forecast.json?key=${this.apiKey}&q=${item.name}&days=3&aqi=no&alerts=no`;
+          try {
+            const response = await fetch(url, {
+              mode: "cors",
+            });
+            this.weatherData = await response.json();
+            this.divideForecast();
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      });
     },
-    setData(data) {
-      this.eval(data) = data;
+    divideForecast() {
+      console.log(this.weatherData.forecast.forecastday[0])
+      this.forecastToday = this.weatherData.forecast.forecastday[0];
+      this.forecastTomorrow = this.weatherData.forecast.forecastday[1];
+      this.forecastAfter = this.weatherData.forecast.forecastday[2];
     },
   },
   components: {

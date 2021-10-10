@@ -1,7 +1,7 @@
 <template>
 <div class="humidity__graph">
   <div class="humidity__graph__container">
-    <img class="humidity__graph__wave" src="../assets/images/humidity_wave.svg" alt="">
+    <img id="humidity-wave" class="humidity__graph__wave" src="../assets/images/humidity_wave.svg" alt="">
     <img class="humidity__graph__drop" src="../assets/images/humidity_drop.svg" alt="">
   </div>
 </div>
@@ -9,6 +9,19 @@
 
 <script >
 export default {
+  props: {
+    humidity: Number,
+  },
+  methods: {
+    transformHumidity() {
+      return `-${parseInt(this.humidity)/ 2.5}px`
+    }
+  },
+  mounted() {
+    const waveElement = document.getElementById("humidity-wave");
+
+    waveElement.style.top = this.transformHumidity();
+  }
 
 };
 </script>
@@ -27,9 +40,9 @@ export default {
 
 .humidity__graph__wave {
   position: absolute;
-  transform: scale(120%);
+  transform: scale(120%) translateY(72%);
   left: 12px;
-  /* top: 0px; */
+  top: 40px;
   z-index: 20;
   animation-name: wave;
   animation-duration: 4s;
