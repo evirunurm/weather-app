@@ -18,11 +18,16 @@
     <div class="summary">
       <div class="left">
         <p class="summary__today font--light">Today: </p>
-        <h3 class="summary__cityname" id="weather_city-name">{{ weatherData?.location?.name }}</h3>
+
+        <h3 v-if="!fetchedData" class="summary__cityname" id="weather_city-name">{{ nonFetchedWeatherData?.location?.name }}</h3>
+        <h3 v-else class="summary__cityname" id="weather_city-name">{{ weatherData?.location?.name }}</h3>
+
         <p class="summary__timedate font--light" id="weather_time-date">{{ weatherData?.location?.localtime }}</p>
         <div class="summary__degrees">
-          <h2 class="degrees__number" id="weather_degrees">{{ weatherData?.current?.temp_c }}</h2>
-          <p class="degrees__unit">ºC</p>
+
+          <h2 v-if="fetchedData" class="degrees__number" id="weather_degrees">{{ weatherData?.current?.temp_c }}</h2>
+          <p v-if="!fetchedData" class="summary__today font--light">Search for a Location</p>
+          <p v-if="fetchedData" class="degrees__unit">ºC</p>
         </div>
       </div>
       <div class="right">
@@ -41,9 +46,14 @@
         <SeeMore />
       </div>
       <div class="forecast__content">
-        <forecast-day day="0" :weatherToday="forecastToday" />
-        <forecast-day day="1" :weatherToday="forecastTomorrow" />
-        <forecast-day day="2" :weatherToday="forecastAfter" />
+        <forecast-day v-if="!fetchedData" day="0" :weatherToday="nonFetchedWeatherData?.forecast" />
+        <forecast-day v-if="fetchedData" day="0" :weatherToday="forecastToday" />
+
+        <forecast-day v-if="!fetchedData" day="1" :weatherToday="nonFetchedWeatherData?.forecast" />
+        <forecast-day v-if="fetchedData" day="1" :weatherToday="forecastTomorrow" />
+
+        <forecast-day v-if="!fetchedData" day="2" :weatherToday="nonFetchedWeatherData?.forecast" />
+        <forecast-day v-if="fetchedData" day="2" :weatherToday="forecastToday" />
       </div>
     </article>
     <article class="air">
@@ -54,25 +64,34 @@
       <div class="air__content__wraper">
         <div class="air__content ">
           <p class="font--light">RealFeel</p>
-          <p class="" id="realFeel">{{ Math.round(weatherData?.current?.feelslike_c) }}ºC</p>
+
+          <p v-if="!fetchedData" class="" id="realFeel">{{ Math.round(nonFetchedWeatherData?.current?.feelslike_c) }}ºC</p>
+          <p v-else class="" id="realFeel">{{ weatherData?.current?.feelslike_c }}ºC</p>
+
         </div>
         <div class="air__content humidity">
           <p class="font--light">UVIndex</p>
           <p v-if="(weatherData?.current?.uv < 4)" id="uvIndex">Low</p>
-          <p v-if="(weatherData?.current?.uv <= 6 && weatherData?.current?.uv >= 4)" id="uvIndex">Medium</p>
-          <p v-if="(weatherData?.current?.uv > 6)" id="uvIndex">High</p>
+          <p v-else-if="(weatherData?.current?.uv <= 6)" id="uvIndex">Medium</p>
+          <p v-else id="uvIndex">High</p>
         </div>
         <div class="air__content humidity">
           <p class="font--light">Wind</p>
-          <p class="" id="wind">{{ weatherData?.current?.wind_kph }} km/h</p>
+
+          <p v-if="fetchedData" class="" id="wind">{{ weatherData?.current?.wind_kph }} km/h</p>
+          <p v-else class="" id="wind">{{ nonFetchedWeatherData?.current?.wind_kph }} km/h</p>
+
         </div>
         <div class="air__content humidity">
           <div class="humidity__data">
             <p class="font--light">Humidity</p>
-            <p class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
+
+            <p v-if="fetchedData" class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
+            <p v-else id="humidity">{{ nonFetchedWeatherData?.current?.humidity }}%</p>
+
           </div>
-          <humidity-graph :humidity="weatherData?.current?.humidity" />
-          <!-- weatherData?.current?.humidity -->
+          <humidity-graph v-if="fetchedData" :humidity="weatherData?.current?.humidity" />
+          <humidity-graph v-else :humidity="nonFetchedWeatherData?.current?.humidity" />
         </div>
       </div>
     </article>
@@ -82,15 +101,24 @@
         <h3>Sunrise & Sunset</h3>
         <SeeMore />
       </div>
-      <sunrise-sunset-graph />
+
+      <sunrise-sunset-graph v-if="fetchedData" :astro="weatherData?.forecast?.forecastday[0]?.astro" />
+      <sunrise-sunset-graph v-else :astro="nonFetchedWeatherData?.forecast?.forecastday[0]?.astro" />
+
       <div class="sunrise-sunset__data__wrapper">
         <div class="sunrise-sunset__data">
           <p class="font--light">Sunrise</p>
-          <p id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
+
+          <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
+          <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
+
         </div>
         <div class="sunrise-sunset__data">
           <p class="font--light">Sunset</p>
-          <p id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+
+          <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+          <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+
         </div>
       </div>
     </article>
@@ -122,9 +150,37 @@ export default {
       apiUrl: 'http://api.weatherapi.com/v1/',
       locationData: [],
       weatherData: {},
+      nonFetchedWeatherData: {
+        location: {
+          name: "City Name",
+        },
+        current: {
+          temp_c: 24,
+          uv: 1,
+          wind_kph: "0 - 10",
+          humidity: 20,
+          feelslike_c: 20,
+        },
+        forecast: {
+          date: 'The day after',
+          day: {
+            mintemp_c: "8",
+            maxtemp_c: "19",
+          },
+          forecastday: [
+          {
+            astro: {
+              sunset: "8.00 PM",
+              sunrise: "6:30 AM"
+            }
+          }]
+        }
+      },
       forecastToday: {},
       forecastTomorrow: {},
       forecastAfter: {},
+      fetchedData: false,
+
     }
   },
   methods: {
@@ -152,6 +208,7 @@ export default {
             });
             this.weatherData = await response.json();
             this.divideForecast();
+            this.fetchedData = true;
           } catch (error) {
             console.log(error);
           }

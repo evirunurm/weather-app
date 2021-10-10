@@ -5,8 +5,8 @@
       <img class="forecast__day__icon" src="../assets/images/icons/001lighticons-01.svg" :alt="weatherToday?.day?.condition?.text">
     </div>
     <p v-if="day == '0'" class="forecast__day__text">Today</p>
-    <p v-if="day == '1'" class="forecast__day__text">Tomorrow</p>
-    <p v-if="day == '2'" class="forecast__day__text">{{ transformDate(weatherToday?.date) }}</p>
+    <p v-else-if="day == '1'" class="forecast__day__text">Tomorrow</p>
+    <p v-else class="forecast__day__text">{{ transformDate(weatherToday?.date) }}</p>
   </div>
   <p class="forecast__day__text">{{Math.round(weatherToday?.day?.mintemp_c)}} / {{Math.round(weatherToday?.day?.maxtemp_c)}}</p>
 </div>
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     transformDate(date) {
-      if (date) {
+      if (date && date.includes("-")) {
         let transformedDate = "";
         const noYear = date.replace("2021-", " ");
         let month = noYear.split("-")[0];
@@ -67,9 +67,9 @@ export default {
             monthText = month;
         }
         transformedDate = `${monthText} ${noYear.split("-")[1]}`
-
         return transformedDate;
       }
+      return date;
     }
   }
 };
