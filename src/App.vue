@@ -271,7 +271,7 @@ export default {
   z-index: 10;
   align-items: center;
   position: fixed;
-  max-width: 376.3px;
+  width: 100%;
 }
 
 .header__logo {
@@ -300,7 +300,7 @@ export default {
 
 .app-container {
   box-shadow: 0px 0px 50px rgb(0, 0, 0, 0.10);
-  max-width: 600px;
+  width: 600px;
 }
 
 
@@ -539,7 +539,7 @@ footer a {
 }
 
 @media (min-width: 700px) {
-  .app-container {
+  /.app-container {
     width: 600px;
   }
 
@@ -547,6 +547,4 @@ footer a {
     max-width: 600px;
   }
 }
-
-/* AIR */
 </style>
