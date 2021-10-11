@@ -2,7 +2,7 @@
 <header class="header header--fixed ">
   <h1 class="header__logo"><span class="blackfont">PING</span>weather</h1>
 </header>
-<main>
+<main class="weather__container">
   <section class="weather-summary">
     <div class="summary-background filter--dark" />
     <div class="searchbar">
@@ -25,7 +25,7 @@
         <p class="summary__timedate font--light" id="weather_time-date">{{ weatherData?.location?.localtime }}</p>
         <div class="summary__degrees">
 
-          <h2 v-if="fetchedData" class="degrees__number" id="weather_degrees">{{ weatherData?.current?.temp_c }}</h2>
+          <h2 v-if="fetchedData" class="degrees__number" id="weather_degrees">{{ Math.round(weatherData?.current?.temp_c) }}</h2>
           <p v-if="!fetchedData" class="summary__today font--light">Search for a Location</p>
           <p v-if="fetchedData" class="degrees__unit">ºC</p>
         </div>
@@ -38,7 +38,7 @@
     </div>
     <a class="summary-credits credits font--light" href="https://www.vecteezy.com/free-vector/nature">Nature Vectors by Vecteezy</a>
   </section>
-  <section class="weather-details">
+  <section class="weather-details scroll-snapping">
     <p class="weather-credits credits font--light">WeatherApi</p>
     <article class="forecast">
       <div class="article__title">
@@ -66,7 +66,7 @@
           <p class="font--light">RealFeel</p>
 
           <p v-if="!fetchedData" class="" id="realFeel">{{ Math.round(nonFetchedWeatherData?.current?.feelslike_c) }}ºC</p>
-          <p v-else class="" id="realFeel">{{ weatherData?.current?.feelslike_c }}ºC</p>
+          <p v-else class="" id="realFeel">{{ Math.round(weatherData?.current?.feelslike_c) }}ºC</p>
 
         </div>
         <div class="air__content humidity">
@@ -124,11 +124,11 @@
     </article>
 
   </section>
+  <footer>
+    <a href="http://www.freepik.com">Icons Designed by Freepik</a>
+    <p>Designed by <a href="https://github.com/evirunurm">@evirunurm</a></p>
+  </footer>
 </main>
-<footer>
-  <a href="http://www.freepik.com">Icons Designed by Freepik</a>
-  <p>Designed by </p>
-</footer>
 </template>
 
 <script>
@@ -251,7 +251,7 @@ export default {
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* ****** */
@@ -276,6 +276,21 @@ body {
 
 .blackfont {
   font-weight: 900;
+}
+
+/* ********* */
+/* CONATINER */
+/* ********* */
+
+.weather__container {
+  scroll-snap-type: y proximity;
+  height: 100vh;
+  overflow: scroll;
+  scroll-margin-top: ;
+}
+
+.scroll-snapping {
+  scroll-snap-align: start;
 }
 
 /* ******* */
@@ -499,7 +514,7 @@ article {
 footer {
   font-size: 0.75em;
   opacity: 0.5;
-  margin: var(--margin-border) 0 var(--margin-border) var(--margin-border);
+  margin: calc(var(--margin-border)*2) 0 var(--margin-border) var(--margin-border);
 }
 
 footer a {

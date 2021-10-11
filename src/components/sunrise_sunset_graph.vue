@@ -21,7 +21,7 @@ export default {
     astro: {}
   },
   methods: {
-    transformTime(time) {
+    transformTimeMetric(time) {
       let withoutFormat = time.split(" ")[0];
       let hours = parseInt(withoutFormat.split(":")[0]);
       let minutes = parseInt(withoutFormat.split(":")[1]);
@@ -43,28 +43,27 @@ export default {
       } else {
         minutes = sunset.minutes - sunrise.minutes;
       }
-      minutes = 60 / minutes;
-      return parseFloat(`${hours}.${minutes}`);
-    }
+
+      return this.translateTimeFloat({
+        hours,
+        minutes
+      });
+    },
+    translateTimeFloat(time) {
+      time.minutes = 60 / time.minutes;
+      return parseFloat(`${time.hours}.${time.minutes}`);
+    },
   },
   mounted() {
     const sunsetSunriseData = document.getElementById("sunsetSunriseData");
 
-    let sunset24 = this.transformTime(this.astro.sunset);
-    let sunrise24 = this.transformTime(this.astro.sunrise);
+    let sunset24 = this.transformTimeMetric(this.astro.sunset);
+    let sunrise24 = this.transformTimeMetric(this.astro.sunrise);
     let dayTime = this.getDayTime(sunset24, sunrise24);
     console.log(dayTime);
 
     sunsetSunriseData.style.width = `${(dayTime * 100) / 24}%`;
-    sunsetSunriseData.style.left = ``;
-    // 50% = 12
-    //solucion = (x * 100) / 24;
-    // x% =
-
-    // 0 - 156
-    //  width: 50%; == 12 horas
-    // sunset-sunrise == horas
-
+    sunsetSunriseData.style.left = `${(this.translateTimeFloat(sunrise24) * 156) / 12}px`;
   }
 };
 </script>
@@ -101,9 +100,7 @@ export default {
   background-color: var(--green);
   position: absolute;
   transform: translate();
-  /* width: 50%; */
   height: 100%;
-  left: 0;
 }
 
 .graph__hours {
