@@ -14,7 +14,6 @@ export default {
   },
   methods: {
     transformHumidity() {
-      console.log(this.humidity)
       const waveElement = document.getElementById("humidity-wave");
       waveElement.style.top = `-${parseInt(this.humidity)/ 2.5}px`;
     }

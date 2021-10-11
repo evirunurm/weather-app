@@ -170,7 +170,7 @@ export default {
           forecastday: [
           {
             astro: {
-              sunset: "8.00 PM",
+              sunset: "8:00 PM",
               sunrise: "6:30 AM"
             }
           }]

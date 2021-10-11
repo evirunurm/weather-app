@@ -17,34 +17,52 @@
 
 <script >
 export default {
-  // props: {
-  //
-  // },
-  // methods: {
-  //   transformTime(time) {
-  //     // TO DO
-  //     // // time = "01:04 PM";
-  //     // if (time.includes("PM")) {
-  //     //
-  //     // } else if (time.includes("AM")) {
-  //     //
-  //     // } else {
-  //     //   console.log("There's been an error with the time format that the API provided.");
-  //     // }
-  //     //
-  //     // return time;
-  //   },
-  // }
+  props: {
+    astro: {}
+  },
+  methods: {
+    transformTime(time) {
+      let withoutFormat = time.split(" ")[0];
+      let hours = parseInt(withoutFormat.split(":")[0]);
+      let minutes = parseInt(withoutFormat.split(":")[1]);
+
+      if (time.includes("PM")) {
+        hours += 12;
+      }
+      return {
+        hours,
+        minutes
+      };
+    },
+    getDayTime(sunset, sunrise) {
+      let minutes;
+      let hours = sunset.hours - sunrise.hours;
+      if (sunset.minutes - sunrise.minutes < 0) {
+        hours--;
+        minutes = 60 + (sunset.minutes - sunrise.minutes);
+      } else {
+        minutes = sunset.minutes - sunrise.minutes;
+      }
+      minutes = 60 / minutes;
+      return parseFloat(`${hours}.${minutes}`);
+    }
+  },
   mounted() {
     const sunsetSunriseData = document.getElementById("sunsetSunriseData");
-    // sunsetSunriseData.stype.left = "";
-    // sunsetSunriseData.stype.width = "";
+
+    let sunset24 = this.transformTime(this.astro.sunset);
+    let sunrise24 = this.transformTime(this.astro.sunrise);
+    let dayTime = this.getDayTime(sunset24, sunrise24);
+    console.log(dayTime);
+
+    sunsetSunriseData.style.width = `${(dayTime * 100) / 24}%`;
+    sunsetSunriseData.style.left = ``;
+    // 50% = 12
+    //solucion = (x * 100) / 24;
+    // x% =
 
     // 0 - 156
-
-
-
-    //  width: 50%;
+    //  width: 50%; == 12 horas
     // sunset-sunrise == horas
 
   }
@@ -83,9 +101,9 @@ export default {
   background-color: var(--green);
   position: absolute;
   transform: translate();
-  width: 50%;
+  /* width: 50%; */
   height: 100%;
-  left: 156px;
+  left: 0;
 }
 
 .graph__hours {
