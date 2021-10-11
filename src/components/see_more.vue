@@ -1,5 +1,5 @@
 <template>
-<a href="#">
+<a href="https://www.weatherapi.com/weather/">
   <p>SEE MORE</p>
   <svg width="6px" height="10">
     <line x1="0" y1="0" x2="6" y2="5" style="stroke:black;stroke-width:1" />
