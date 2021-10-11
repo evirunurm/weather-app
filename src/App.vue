@@ -1,134 +1,139 @@
 <template>
-<header class="header header--fixed ">
-  <h1 class="header__logo"><span class="blackfont">PING</span>weather</h1>
-</header>
-<main class="weather__container">
-  <section class="weather-summary">
-    <div class="summary-background filter--dark" />
-    <div class="searchbar">
-      <label class="location-label" for="location-input">Location</label>
-      <div class="location-searchbar">
-        <input list="locations" @input="fetchLocation(); fetchWeather();" class="location-searchbar__input" id="location-input" type="text" name="" v-model="location">
-        <datalist id="locations">
-          <option v-for="location in locationData" :value="location?.name" />
-        </datalist>
-        <img class="location-searchbar__icon" src="./assets/images/icons/search.png" alt="">
-      </div>
-    </div>
-    <div class="summary">
-      <div class="left">
-        <p class="summary__today font--light">Today: </p>
+<div class="app-background">
+  <div class="app-container">
+    <header class="header header--fixed ">
+      <h1 class="header__logo"><span class="blackfont">PING</span>weather</h1>
+    </header>
 
-        <h3 v-if="!fetchedData" class="summary__cityname" id="weather_city-name">{{ nonFetchedWeatherData?.location?.name }}</h3>
-        <h3 v-else class="summary__cityname" id="weather_city-name">{{ weatherData?.location?.name }}</h3>
-
-        <p class="summary__timedate font--light" id="weather_time-date">{{ weatherData?.location?.localtime }}</p>
-        <div class="summary__degrees">
-
-          <h2 v-if="fetchedData" class="degrees__number" id="weather_degrees">{{ Math.round(weatherData?.current?.temp_c) }}</h2>
-          <p v-if="!fetchedData" class="summary__today font--light">Search for a Location</p>
-          <p v-if="fetchedData" class="degrees__unit">ºC</p>
-        </div>
-      </div>
-      <div class="right">
-        <div class="summary__icon__container">
-          <img class="summary__icon" src="./assets/images/icons/001lighticons-01.svg" alt="">
-        </div>
-      </div>
-    </div>
-    <a class="summary-credits credits font--light" href="https://www.vecteezy.com/free-vector/nature">Nature Vectors by Vecteezy</a>
-  </section>
-  <section class="weather-details scroll-snapping">
-    <p class="weather-credits credits font--light">WeatherApi</p>
-    <article class="forecast">
-      <div class="article__title">
-        <h3>Forecast</h3>
-        <SeeMore />
-      </div>
-      <div class="forecast__content">
-        <forecast-day v-if="!fetchedData" day="0" :weatherToday="nonFetchedWeatherData?.forecast" />
-        <forecast-day v-if="fetchedData" day="0" :weatherToday="forecastToday" />
-
-        <forecast-day v-if="!fetchedData" day="1" :weatherToday="nonFetchedWeatherData?.forecast" />
-        <forecast-day v-if="fetchedData" day="1" :weatherToday="forecastTomorrow" />
-
-        <forecast-day v-if="!fetchedData" day="2" :weatherToday="nonFetchedWeatherData?.forecast" />
-        <forecast-day v-if="fetchedData" day="2" :weatherToday="forecastToday" />
-      </div>
-    </article>
-    <article class="air">
-      <div class="article__title">
-        <h3>Air</h3>
-        <SeeMore />
-      </div>
-      <div class="air__content__wraper">
-        <div class="air__content ">
-          <p class="font--light">RealFeel</p>
-
-          <p v-if="!fetchedData" class="" id="realFeel">{{ Math.round(nonFetchedWeatherData?.current?.feelslike_c) }}ºC</p>
-          <p v-else class="" id="realFeel">{{ Math.round(weatherData?.current?.feelslike_c) }}ºC</p>
-
-        </div>
-        <div class="air__content humidity">
-          <p class="font--light">UVIndex</p>
-          <p v-if="(weatherData?.current?.uv < 4)" id="uvIndex">Low</p>
-          <p v-else-if="(weatherData?.current?.uv <= 6)" id="uvIndex">Medium</p>
-          <p v-else id="uvIndex">High</p>
-        </div>
-        <div class="air__content humidity">
-          <p class="font--light">Wind</p>
-
-          <p v-if="fetchedData" class="" id="wind">{{ weatherData?.current?.wind_kph }} km/h</p>
-          <p v-else class="" id="wind">{{ nonFetchedWeatherData?.current?.wind_kph }} km/h</p>
-
-        </div>
-        <div class="air__content humidity">
-          <div class="humidity__data">
-            <p class="font--light">Humidity</p>
-
-            <p v-if="fetchedData" class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
-            <p v-else id="humidity">{{ nonFetchedWeatherData?.current?.humidity }}%</p>
-
+    <main class="weather__container">
+      <section class="weather-summary">
+        <div class="summary-background filter--dark" />
+        <div class="searchbar">
+          <label class="location-label" for="location-input">Location</label>
+          <div class="location-searchbar">
+            <input list="locations" @input="fetchLocation(); fetchWeather();" class="location-searchbar__input" id="location-input" type="text" name="" v-model="location">
+            <datalist id="locations">
+              <option v-for="location in locationData" :value="location?.name" />
+            </datalist>
+            <img class="location-searchbar__icon" src="./assets/images/icons/search.png" alt="">
           </div>
-          <humidity-graph v-if="fetchedData" :humidity="weatherData?.current?.humidity" />
-          <humidity-graph v-else :humidity="nonFetchedWeatherData?.current?.humidity" />
         </div>
-      </div>
-    </article>
-    <hr>
-    <article class="sunrise-sunset">
-      <div class="article__title">
-        <h3>Sunrise & Sunset</h3>
-        <SeeMore />
-      </div>
+        <div class="summary">
+          <div class="left">
+            <p class="summary__today font--light">Today: </p>
 
-      <sunrise-sunset-graph v-if="fetchedData" :astro="weatherData?.forecast?.forecastday[0]?.astro" />
-      <sunrise-sunset-graph v-else :astro="nonFetchedWeatherData?.forecast?.forecastday[0]?.astro" />
+            <h3 v-if="!fetchedData" class="summary__cityname" id="weather_city-name">{{ nonFetchedWeatherData?.location?.name }}</h3>
+            <h3 v-else class="summary__cityname" id="weather_city-name">{{ weatherData?.location?.name }}</h3>
 
-      <div class="sunrise-sunset__data__wrapper">
-        <div class="sunrise-sunset__data">
-          <p class="font--light">Sunrise</p>
+            <p class="summary__timedate font--light" id="weather_time-date">{{ weatherData?.location?.localtime }}</p>
+            <div class="summary__degrees">
 
-          <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
-          <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
-
+              <h2 v-if="fetchedData" class="degrees__number" id="weather_degrees">{{ Math.round(weatherData?.current?.temp_c) }}</h2>
+              <p v-if="!fetchedData" class="summary__today font--light">Search for a Location</p>
+              <p v-if="fetchedData" class="degrees__unit">ºC</p>
+            </div>
+          </div>
+          <div class="right">
+            <div class="summary__icon__container">
+              <img class="summary__icon" src="./assets/images/icons/001lighticons-01.svg" alt="">
+            </div>
+          </div>
         </div>
-        <div class="sunrise-sunset__data">
-          <p class="font--light">Sunset</p>
+        <a class="summary-credits credits font--light" href="https://www.vecteezy.com/free-vector/nature">Nature Vectors by Vecteezy</a>
+      </section>
+      <section class="weather-details scroll-snapping">
+        <p class="weather-credits credits font--light">WeatherApi</p>
+        <article class="forecast">
+          <div class="article__title">
+            <h3>Forecast</h3>
+            <SeeMore />
+          </div>
+          <div class="forecast__content">
+            <forecast-day v-if="!fetchedData" day="0" :weatherToday="nonFetchedWeatherData?.forecast" />
+            <forecast-day v-if="fetchedData" day="0" :weatherToday="forecastToday" />
 
-          <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
-          <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+            <forecast-day v-if="!fetchedData" day="1" :weatherToday="nonFetchedWeatherData?.forecast" />
+            <forecast-day v-if="fetchedData" day="1" :weatherToday="forecastTomorrow" />
 
-        </div>
-      </div>
-    </article>
+            <forecast-day v-if="!fetchedData" day="2" :weatherToday="nonFetchedWeatherData?.forecast" />
+            <forecast-day v-if="fetchedData" day="2" :weatherToday="forecastToday" />
+          </div>
+        </article>
+        <article class="air">
+          <div class="article__title">
+            <h3>Air</h3>
+            <SeeMore />
+          </div>
+          <div class="air__content__wraper">
+            <div class="air__content ">
+              <p class="font--light">RealFeel</p>
 
-  </section>
-  <footer>
-    <a href="http://www.freepik.com">Icons Designed by Freepik</a>
-    <p>Designed by <a href="https://github.com/evirunurm">@evirunurm</a></p>
-  </footer>
-</main>
+              <p v-if="!fetchedData" class="" id="realFeel">{{ Math.round(nonFetchedWeatherData?.current?.feelslike_c) }}ºC</p>
+              <p v-else class="" id="realFeel">{{ Math.round(weatherData?.current?.feelslike_c) }}ºC</p>
+
+            </div>
+            <div class="air__content humidity">
+              <p class="font--light">UVIndex</p>
+              <p v-if="(weatherData?.current?.uv < 4)" id="uvIndex">Low</p>
+              <p v-else-if="(weatherData?.current?.uv <= 6)" id="uvIndex">Medium</p>
+              <p v-else id="uvIndex">High</p>
+            </div>
+            <div class="air__content humidity">
+              <p class="font--light">Wind</p>
+
+              <p v-if="fetchedData" class="" id="wind">{{ weatherData?.current?.wind_kph }} km/h</p>
+              <p v-else class="" id="wind">{{ nonFetchedWeatherData?.current?.wind_kph }} km/h</p>
+
+            </div>
+            <div class="air__content humidity">
+              <div class="humidity__data">
+                <p class="font--light">Humidity</p>
+
+                <p v-if="fetchedData" class="" id="humidity">{{ weatherData?.current?.humidity }}%</p>
+                <p v-else id="humidity">{{ nonFetchedWeatherData?.current?.humidity }}%</p>
+
+              </div>
+              <humidity-graph v-if="fetchedData" :humidity="weatherData?.current?.humidity" />
+              <humidity-graph v-else :humidity="nonFetchedWeatherData?.current?.humidity" />
+            </div>
+          </div>
+        </article>
+        <hr>
+        <article class="sunrise-sunset">
+          <div class="article__title">
+            <h3>Sunrise & Sunset</h3>
+            <SeeMore />
+          </div>
+
+          <sunrise-sunset-graph v-if="fetchedData" :astro="weatherData?.forecast?.forecastday[0]?.astro" />
+          <sunrise-sunset-graph v-else :astro="nonFetchedWeatherData?.forecast?.forecastday[0]?.astro" />
+
+          <div class="sunrise-sunset__data__wrapper">
+            <div class="sunrise-sunset__data">
+              <p class="font--light">Sunrise</p>
+
+              <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
+              <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunrise }}</p>
+
+            </div>
+            <div class="sunrise-sunset__data">
+              <p class="font--light">Sunset</p>
+
+              <p v-if="fetchedData" id="humidity">{{ weatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+              <p v-else id="humidity">{{ nonFetchedWeatherData?.forecast?.forecastday[0]?.astro?.sunset }}</p>
+
+            </div>
+          </div>
+        </article>
+
+      </section>
+      <footer>
+        <a href="http://www.freepik.com">Icons Designed by Freepik</a>
+        <p>Developed by <a href="https://github.com/evirunurm">Evelin Virunurm</a></p>
+      </footer>
+    </main>
+  </div>
+</div>
 </template>
 
 <script>
@@ -250,9 +255,9 @@ export default {
   font-family: 'Open Sans', sans-serif;
 }
 
-body {
-  overflow: hidden;
-}
+/* body {
+   overflow: hidden;
+} */
 
 /* ****** */
 /* HEADER */
@@ -266,6 +271,7 @@ body {
   z-index: 10;
   align-items: center;
   position: fixed;
+  max-width: 376.3px;
 }
 
 .header__logo {
@@ -282,15 +288,24 @@ body {
 /* CONATINER */
 /* ********* */
 
-.weather__container {
-  scroll-snap-type: y proximity;
+.app-background {
+  /* background-color: pink; */
+  position: absolute;
+  width: 100vw;
   height: 100vh;
-  overflow: scroll;
-  scroll-margin-top: ;
+  z-index: -30;
+  justify-content: center;
+  display: flex;
 }
 
+.app-container {
+  box-shadow: 0px 0px 50px rgb(0, 0, 0, 0.10);
+  max-width: 600px;
+}
+
+
 .scroll-snapping {
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; */
 }
 
 /* ******* */
@@ -315,7 +330,7 @@ body {
   height: 150%;
   position: absolute;
   top: 0;
-  z-index: -10;
+  z-index: -5;
   color: inherit;
 }
 
@@ -358,7 +373,8 @@ body {
 .location-searchbar__icon {
   position: absolute;
   height: 90%;
-  right: 7%;
+  right: 3%;
+  opacity: 0.5;
 }
 
 /* SUMMARY */
@@ -438,7 +454,7 @@ body {
 }
 
 article {
-  margin: calc(var(--margin-border)/2) 0 calc(var(--margin-border)/2) 0;
+  padding: calc(var(--margin-border)/2) 0 calc(var(--margin-border)/2) 0;
 }
 
 /* FORECAST */
@@ -493,7 +509,7 @@ article {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   font-size: 0.75em;
-  margin: calc(var(--margin-border)/2) 0 0 0;
+  padding: calc(var(--margin-border)/2) 0 0 0;
 }
 
 .sunrise-sunset__data {
@@ -513,12 +529,23 @@ article {
 
 footer {
   font-size: 0.75em;
-  opacity: 0.5;
-  margin: calc(var(--margin-border)*2) 0 var(--margin-border) var(--margin-border);
+  color: rgba(0, 0, 0, 0.5);
+  padding: calc(var(--margin-border)*2) 0 var(--margin-border) var(--margin-border);
+  background-color: var(--white);
 }
 
 footer a {
-  color: var(--black);
+  color: rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 700px) {
+  .app-container {
+    width: 600px;
+  }
+
+  .header {
+    max-width: 600px;
+  }
 }
 
 /* AIR */

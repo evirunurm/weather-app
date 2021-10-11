@@ -21,6 +21,16 @@ export default {
     astro: {}
   },
   methods: {
+    changeData() {
+      const sunsetSunriseData = document.getElementById("sunsetSunriseData");
+
+      let sunset24 = this.transformTimeMetric(this.astro.sunset);
+      let sunrise24 = this.transformTimeMetric(this.astro.sunrise);
+      let dayTime = this.getDayTime(sunset24, sunrise24);
+
+      sunsetSunriseData.style.width = `${(dayTime * 100) / 24}%`;
+      sunsetSunriseData.style.left = `${(this.translateTimeFloat(sunrise24)* 50) / 12}%`;
+    },
     transformTimeMetric(time) {
       let withoutFormat = time.split(" ")[0];
       let hours = parseInt(withoutFormat.split(":")[0]);
@@ -54,16 +64,11 @@ export default {
       return parseFloat(`${time.hours}.${time.minutes}`);
     },
   },
+  updated() {
+    this.changeData();
+  },
   mounted() {
-    const sunsetSunriseData = document.getElementById("sunsetSunriseData");
-
-    let sunset24 = this.transformTimeMetric(this.astro.sunset);
-    let sunrise24 = this.transformTimeMetric(this.astro.sunrise);
-    let dayTime = this.getDayTime(sunset24, sunrise24);
-    console.log(dayTime);
-
-    sunsetSunriseData.style.width = `${(dayTime * 100) / 24}%`;
-    sunsetSunriseData.style.left = `${(this.translateTimeFloat(sunrise24) * 156) / 12}px`;
+    this.changeData();
   }
 };
 </script>
