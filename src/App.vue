@@ -152,7 +152,7 @@ export default {
     return {
       apiKey: '2c9b7c40a56942f6ace143344210410',
       // 2c9b7c40a56942f6ace143344210410,
-      apiUrl: 'http://api.weatherapi.com/v1/',
+      apiUrl: 'https://api.weatherapi.com/v1/',
       locationData: [],
       weatherData: {},
       nonFetchedWeatherData: {
